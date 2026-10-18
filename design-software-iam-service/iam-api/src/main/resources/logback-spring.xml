@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HU-IAM-011 E3 (ADR-008): JSON structured logs on stdout. The OTel Java agent injects
+  trace_id/span_id into the logback MDC whenever a span is active; LogstashEncoder embeds
+  all MDC entries as top-level JSON fields, so every log line correlates with its trace.
+-->
+<configuration>
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="iam-service"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"service":"${appName}"}</customFields>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

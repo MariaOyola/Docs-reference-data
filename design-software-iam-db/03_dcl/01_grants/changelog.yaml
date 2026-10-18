@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: dcl-grants-iam-001
+      author: jesus-gonzalez
+      labels: "dcl,grants"
+      comment: Grants least-privilege del dominio iam
+      changes:
+        - sqlFile: {path: 001_grants.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sql: {sql: "SELECT 1;"}
+
+  - changeSet:
+      id: iam-outbox-grants-001
+      author: jesus-gonzalez
+      labels: "iam-db-gaps-dev,dcl,grants,outbox"
+      comment: Least-privilege grants for identity.outbox (writer/reader/admin)
+      changes:
+        - sqlFile: {path: 002_grants_outbox.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sql: {sql: "REVOKE ALL PRIVILEGES ON identity.outbox FROM iam_reader, iam_writer, iam_admin;"}

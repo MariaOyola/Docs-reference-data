@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 527e6f09-fcc0-46b3-8c88-47ab98bc0670
+      author: Pemarival
+      labels: "ddl,base,types"
+      comment: Creates the institutional_structure types for the institutional structure module.
+      changes:
+        - sqlFile:
+            path: 001_create_types_institutional_structure.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_types/001_create_types_institutional_structure.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 753b6d25-5387-427d-a37f-9d26fc5ce09d
+      author: Pemarival
+      labels: "ddl,base,types"
+      comment: Creates the parameterization types for the parameterization module.
+      changes:
+        - sqlFile:
+            path: 002_create_types_parameterization.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_types/002_create_types_parameterization.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false

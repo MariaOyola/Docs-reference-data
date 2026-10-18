@@ -1,0 +1,12 @@
+target/
+*.class
+.env
+*.log
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+.worktrees/
+.claude/
+

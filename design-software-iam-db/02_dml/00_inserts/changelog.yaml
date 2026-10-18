@@ -1,0 +1,87 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu-iam-017-qa-password-007
+      author: codex
+      labels: "dml,qa,hu-iam-017,hu-act-019"
+      comment: Sets the local QA learner fixture to a valid BCrypt password without editing the original seed
+      changes:
+        - sqlFile:
+            path: 007_update_hu_iam_017_learner_password.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/02_dml/00_inserts/007_update_hu_iam_017_learner_password.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+  - changeSet:
+      id: seed-rbac-001
+      author: jesus-gonzalez
+      labels: "seed,rbac"
+      comment: Seed RBAC (modules, features, roles, role_feature) desde rbac-design.md
+      changes:
+        - sqlFile:
+            path: 001_seed_rbac.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/02_dml/00_inserts/001_seed_rbac.rollback.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: seed-demo-iam-001
+      author: jesus-gonzalez
+      labels: "seed,demo"
+      comment: Demo - usuario SYSTEM_ADMIN inicial y su rol
+      changes:
+        - sqlFile: {path: 002_seed_demo.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sql: {sql: "DELETE FROM rbac.user_role WHERE user_id='c0000000-0000-0000-0000-000000000001'; DELETE FROM identity.\"user\" WHERE id='c0000000-0000-0000-0000-000000000001';"}
+  - changeSet:
+      id: remediation-iam-961
+      author: jesus-gonzalez
+      labels: "remediation,congruence,rbac,v2"
+      comment: "R3.1: agrega las 8 features que el contrato exige y el seed no tenia (*_REPORT_VIEW, MON_CATALOG_MANAGE, MON_NOTIFICATION_VIEW, DOC_TEMPLATE_VIEW) + asignacion a roles. Idempotente"
+      changes:
+        - sqlFile: {path: 003_seed_missing_features.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sqlFile: {path: ../../05_rollbacks/02_dml/00_inserts/003_seed_missing_features.rollback.sql, relativeToChangelogFile: true, stripComments: false}
+  - changeSet:
+      id: hu-act-012-seed-actors-rbac-004
+      author: codex
+      labels: "seed,rbac,actors"
+      comment: Grant existing Actors company and activity log features to existing roles
+      changes:
+        - sqlFile: {path: 004_seed_actors_rbac_assignments.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sqlFile: {path: ../../05_rollbacks/02_dml/00_inserts/004_seed_actors_rbac_assignments.rollback.sql, relativeToChangelogFile: true, stripComments: false}
+  - changeSet:
+      id: hu-act-012-seed-internal-ficha-learner-count-005
+      author: stiven pm
+      labels: "seed,rbac,actors,internal"
+      comment: Add internal Actors feature required by the active learner count endpoint
+      changes:
+        - sqlFile: {path: 005_seed_internal_ficha_learner_count_feature.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sqlFile: {path: ../../05_rollbacks/02_dml/00_inserts/005_seed_internal_ficha_learner_count_feature.rollback.sql, relativeToChangelogFile: true, stripComments: false}
+  - changeSet:
+      id: hu-iam-017-seed-learner-006
+      author: codex
+      labels: "seed,test,hu-iam-017,hu-act-019"
+      comment: Local integration learner fixture used to validate ficha_id propagation
+      changes:
+        - sqlFile: {path: 006_seed_hu_iam_017_learner.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sqlFile: {path: ../../05_rollbacks/02_dml/00_inserts/006_seed_hu_iam_017_learner.rollback.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+  - changeSet:
+      id: hu-aud-004-grant-audit-export-008
+      author: codex
+      labels: "seed,rbac,audit,hu-aud-004"
+      comment: Grants the contract-required AUDIT_EXPORT feature to audit administrators with their documented scopes
+      changes:
+        - sqlFile: {path: 008_grant_audit_export.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sqlFile: {path: ../../05_rollbacks/02_dml/00_inserts/008_grant_audit_export.rollback.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}

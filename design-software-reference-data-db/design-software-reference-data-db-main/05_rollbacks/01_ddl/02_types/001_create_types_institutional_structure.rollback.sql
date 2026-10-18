@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS institutional_structure.institutional_unit_type;

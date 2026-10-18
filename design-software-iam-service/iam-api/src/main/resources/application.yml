@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: iam-service
+  datasource:
+    url: ${IAM_DB_DSN}
+    username: ${IAM_DB_USERNAME}
+    password: ${IAM_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+  sql:
+    init:
+      mode: never
+  # HU-IAM-011: Boot's default Rabbit health contributor probes the broker at its default
+  # host (localhost) even when spring.rabbitmq.host is unset, which would misreport it as
+  # DOWN in /actuator/health for environments where the HU-IAM-007 relay is intentionally
+  # off. BrokerHealthConfiguration registers its own "broker" indicator instead, gated on
+  # spring.rabbitmq.host, which HealthController's /ready consults directly.
+  autoconfigure:
+    exclude: org.springframework.boot.actuate.autoconfigure.amqp.RabbitHealthContributorAutoConfiguration
+
+# Signing material for the RS256 access tokens. No defaults: a missing secret must stop
+# the service at startup, never fall back to something guessable.
+iam:
+  jwt:
+    private-key: ${IAM_JWT_PRIVATE_KEY}
+    issuer: ${IAM_JWT_ISSUER}
+    key-id: ${IAM_JWT_KEY_ID:iam-rsa-1}
+    # HU-IAM-010 E3 — set both only during a key rotation window; unset (default) means no
+    # rotation in progress. See GET /api/v1/auth/.well-known/jwks.json and authentication.md.
+    previous-public-key: ${IAM_JWT_PREVIOUS_PUBLIC_KEY:}
+    previous-key-id: ${IAM_JWT_PREVIOUS_KEY_ID:}
+  # HU-ACAD-10: one narrowly scoped service client; keep both values in the secret store.
+  m2m:
+    academic:
+      client-id: ${IAM_M2M_ACADEMIC_CLIENT_ID:}
+      client-secret: ${IAM_M2M_ACADEMIC_CLIENT_SECRET:}
+      token-ttl-seconds: ${IAM_M2M_TOKEN_TTL_SECONDS:300}
+  # HU-IAM-007 outbox relay. The broker connection is configured through the standard Spring
+  # env vars (SPRING_RABBITMQ_HOST, SPRING_RABBITMQ_USERNAME, SPRING_RABBITMQ_PASSWORD, and
+  # optionally SPRING_RABBITMQ_PORT / SPRING_RABBITMQ_VIRTUAL_HOST). No secret defaults — when
+  # no host is set the relay stays off and events simply accumulate (staged) in identity.outbox.
+  events:
+    exchange: ${IAM_EVENTS_EXCHANGE:iam-events}
+  outbox:
+    relay:
+      poll-interval-ms: ${IAM_OUTBOX_RELAY_POLL_INTERVAL_MS:5000}
+      initial-delay-ms: ${IAM_OUTBOX_RELAY_INITIAL_DELAY_MS:5000}
+      batch-size: ${IAM_OUTBOX_RELAY_BATCH_SIZE:100}
+  actors:
+    active-ficha-url: ${IAM_ACTORS_ACTIVE_FICHA_URL:}
+    mtls:
+      key-store: ${IAM_ACTORS_MTLS_KEY_STORE:}
+      key-store-password: ${IAM_ACTORS_MTLS_KEY_STORE_PASSWORD:}
+      trust-store: ${IAM_ACTORS_MTLS_TRUST_STORE:}
+      trust-store-password: ${IAM_ACTORS_MTLS_TRUST_STORE_PASSWORD:}
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true

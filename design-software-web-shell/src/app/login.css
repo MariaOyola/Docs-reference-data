@@ -1,0 +1,9 @@
+.login-page { min-height: 100%; display: grid; place-items: center; padding: 24px; }
+.login-card { width: min(100%, 420px); padding: 32px; background: var(--color-surface, white); border: 1px solid #dce3dd; border-radius: 16px; box-shadow: 0 12px 40px #16302012; }
+.login-brand { color: #277c18; font-weight: 800; letter-spacing: .12em; }
+.login-card h1 { font-size: 1.8rem; }
+.login-card label { display: block; margin-top: 20px; font-weight: 600; }
+.login-card input { width: 100%; margin-top: 6px; padding: 12px; border: 1px solid #829187; border-radius: 6px; font: inherit; }
+.login-card button { width: 100%; margin-top: 24px; padding: 12px; border: 0; border-radius: 6px; color: white; background: #277c18; font: inherit; font-weight: 700; cursor: pointer; }
+.login-card button:disabled { opacity: .65; cursor: wait; }
+.login-card [role=alert] { color: #a01919; }

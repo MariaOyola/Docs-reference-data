@@ -1,0 +1,60 @@
+/**
+ * Tokens del shell — HU-SHELL-005.
+ *
+ * Los valores ratificados vienen de `@sena/design-system`, generados desde
+ * `design-software-docs/12-ux-ui/mockup-ddd/design-tokens.md` (locked, WCAG AA
+ * verificado). Este archivo NO redefine ninguno: los carga y los expone bajo los
+ * nombres que el shell ya usaba, para no tener que reescribir todos los CSS Modules.
+ *
+ * Lo que el spec no cubre vive en `shell-tokens.css`, con prefijo `shell-`.
+ */
+
+/* Tokens canonicos del design-system. */
+@import '@sena/design-system/tokens.css';
+
+/* Peldanios propios del shell. */
+@import './shell-tokens.css';
+
+:root {
+  /* Puentes de compatibilidad: nombres antiguos -> tokens del design-system.
+   *
+   * ⚠️ Solo se(alias)a tokens con OTRO nombre. Un token que ya existe en el spec no
+   * se vuelve a declarar: auto-referencia seria un ciclo CSS invalido.
+   * `tokens.test.ts` verifica que apunten al token correcto.
+   */
+  --color-brand-strong: var(--shell-primary-600);
+  --color-danger-soft: var(--color-danger-surface);
+
+  /* Alias del espaciado del shell a su escala propia (ver shell-tokens.css). */
+  --space-1: var(--shell-space-1);
+  --space-2: var(--shell-space-2);
+  --space-3: var(--shell-space-3);
+  --space-4: var(--shell-space-4);
+  --space-5: var(--shell-space-5);
+  --space-6: var(--shell-space-6);
+  --space-8: var(--shell-space-8);
+  --space-10: var(--shell-space-10);
+  --space-12: var(--shell-space-12);
+
+  /* Alias de tipografia. */
+  --font-size-h1: var(--shell-font-size-h1);
+  --font-size-h2: var(--shell-font-size-h2);
+  --font-size-h3: var(--shell-font-size-h3);
+  --font-size-h4: var(--shell-font-size-h4);
+  --font-size-body: var(--shell-font-size-body);
+  --font-size-caption: var(--shell-font-size-caption);
+  --font-weight-extra-bold: var(--shell-font-weight-extra-bold);
+
+  /* Peldanios sin equivalente en el spec. */
+  --radius-full: var(--shell-radius-full);
+  --target-touch-min: var(--shell-target-touch-min);
+  --color-warning-border: var(--shell-color-warning-border);
+  --focus-ring: var(--shell-focus-ring);
+  --z-base: var(--shell-z-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0ms;
+  }
+}

@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu-ref-018-jwt-fixture-001
+      author: Freinier-Cardona
+      labels: "fixture,jwt,rbac,hu-ref-018,dev,qa"
+      context: "dev,qa"
+      comment: Usuarios de prueba IAM para validar JWT real y RBAC de parámetros; no modifica el esquema.
+      changes:
+        - sqlFile:
+            path: 001_seed_hu_ref_018_jwt_users.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/02_dml/04_patches/001_seed_hu_ref_018_jwt_users.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false

@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8b4d9d88-5d6b-4b78-a07f-2a3e8d1f5c91
+      author: daniel2004-lsd
+      labels: "HU-02-dev,ddl,base,alter"
+      comment: Creates the institutional_structure alter for the institutional structure module.
+      changes:
+        - sqlFile:
+            path: 001_Creating_Foreign_Keys.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/04_alter/001_Creating_Foreign_Keys.sql.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+
+  - changeSet:
+      id: remediation-reference-960
+      author: jesus-gonzalez
+      labels: "remediation,congruence,v2"
+      comment: "R3: ENUM nativo -> VARCHAR+CHECK en unit_type y value_type (ADR-004)"
+      changes:
+        - sqlFile:
+            path: 960_remediation.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/04_alter/960_remediation.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false

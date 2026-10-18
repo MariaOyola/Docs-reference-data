@@ -1,0 +1,88 @@
+# Job de deriva del spec — pendiente de `SPEC_REPO_TOKEN`
+#
+# HU-SHELL-005 dejó esta deuda: el CI usa la copia versionada en `spec/`, así que no
+# se entera si el spec cambia en `design-software-docs`. Alguien edita `spec/` a mano
+# o regenera contra una fuente vieja, el CI pasa, y el design-system queda
+# desincronizado del spec ratificado.
+#
+# Este job lo resuelve clonando las fuentes reales y fallando si `spec/` quedó
+# desactualizado.
+#
+# ⚠️ QUÉ ES PRIVADO Y QUÉ NO (verificado 2026-10-13):
+#   - `design-software-docs`  → PRIVADO. Necesita credencial.
+#   - `design-software-pages` → PÚBLICO. `GITHUB_TOKEN` puede leerlo sin secreto.
+#
+# ⚠️ PENDIENTE DE DECISIÓN (ver DEUDA-spec-repo-access.md):
+#   Un PAT fine-grained no se puede scoped a `code-sena` desde una cuenta que no es
+#   miembro: GitHub solo lista en "Resource owner" las orgs con fine-grained PATs
+#   habilitado. Las dos opciones viables son:
+#     A) Deploy key SSH de solo lectura en `design-software-docs` (recomendado) →
+#        secret `SPEC_REPO_SSH_KEY`.
+#     B) PAT clásico con scope `repo` → secret `SPEC_REPO_TOKEN`.
+#
+# ⚠️ NO SE ACTIVA HASTA QUE HAYA CREDENCIAL. Sin ella, el checkout del repo privado
+#    falla y este job rompe el pipeline. Está comentado a propósito.
+#
+# Ver "Deuda" en README.md para el paso a paso de creación del PAT.
+
+# name: Spec sin deriva
+#
+# runs-on: ubuntu-latest
+#
+# permissions:
+#   contents: read
+#
+# steps:
+#   - uses: actions/checkout@v4
+#
+#   - uses: actions/setup-node@v4
+#     with:
+#       node-version: 22
+#       cache: npm
+#
+#   - run: npm ci
+#
+#   # `pages` es público: se clona sin credenciales.
+#   - name: Clonar la fuente publica de valores
+#     run: git clone --depth 1 https://github.com/code-sena/design-software-pages.git ../design-software-pages
+#
+#   # `docs` es privado: necesita el PAT. `insteadOf` evita exponer el token en el log.
+#   - name: Configurar acceso al repo privado del spec
+#     env:
+#       SPEC_REPO_TOKEN: ${{ secrets.SPEC_REPO_TOKEN }}
+#     run: |
+#       if [ -z "${SPEC_REPO_TOKEN}" ]; then
+#         echo "::error::Falta el secret SPEC_REPO_TOKEN."
+#         exit 1
+#       fi
+#       git config --global url."https://x-access-token:${SPEC_REPO_TOKEN}@github.com/".insteadOf "https://github.com/code-sena/"
+#
+#   - name: Clonar la fuente ratificada del spec
+#     env:
+#       SPEC_REPO_TOKEN: ${{ secrets.SPEC_REPO_TOKEN }}
+#     run: git clone --depth 1 https://x-access-token:${SPEC_REPO_TOKEN}@github.com/design-software-docs.git ../design-software-docs
+#
+#   - name: Refrescar spec/ desde las fuentes
+#     run: npm run sync:spec
+#
+#   - name: Fallar si spec/ estaba desactualizado
+#     run: |
+#       if ! git diff --quiet -- spec/; then
+#         echo "::error::spec/ esta desactualizado respecto a las fuentes. Corre 'npm run sync:spec' y commit."
+#         git diff -- spec/
+#         exit 1
+#       fi
+#       echo "spec/ al dia."
+#
+#   - run: npm run check:tokens
+#
+#   - run: npm run generate:tokens
+#
+#   - name: Fallar si los tokens no reflejan el spec
+#     run: |
+#       if ! git diff --quiet -- src/tokens/; then
+#         echo "::error::Los tokens no reflejan el spec. Corre 'npm run generate:tokens' y commit."
+#         git diff -- src/tokens/
+#         exit 1
+#       fi
+#       echo "Tokens al dia."

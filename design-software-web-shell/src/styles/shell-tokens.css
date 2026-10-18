@@ -1,0 +1,57 @@
+/**
+ * Tokens propios del shell — HU-SHELL-005.
+ *
+ * Los tokens del spec viven en `@sena/design-system` (ver `tokens.css` de ese repo,
+ * generado desde `design-tokens.md`). Este archivo solo declara lo que el shell necesita
+ * y el spec NO cubre. Los nombres usan el prefijo `shell-` a propósito, para que una
+ * redefinición de un token ratificado sea visible en revisión.
+ *
+ * ⚠️ No duplicar aquí ningún token del spec. `tokens.test.ts` falla si lo haces.
+ */
+
+/* Escala propia del shell.
+ *
+ * El spec define `space-1…8` = 4·8·12·16·24·32·40·48 px, pero el shell venía usando una
+ * escala en rem con valores distintos para los mismos nombres (space-6 = 24px aquí,
+ * 32px en el spec). Adoptar la del spec movía todo el layout, así que se conserva la
+ * escala aprobada y se renombra con prefijo. Migrar de verdad es trabajo visual.
+ */
+:root {
+  --shell-space-1: 0.25rem;  /*  4px */
+  --shell-space-2: 0.5rem;   /*  8px */
+  --shell-space-3: 0.75rem;  /* 12px */
+  --shell-space-4: 1rem;     /* 16px */
+  --shell-space-5: 1.25rem;  /* 20px */
+  --shell-space-6: 1.5rem;   /* 24px */
+  --shell-space-8: 2rem;     /* 32px */
+  --shell-space-10: 2.5rem;  /* 40px */
+  --shell-space-12: 3rem;    /* 48px */
+}
+
+/* Escala de grises del verde institucional, usada por `--color-brand-strong`.
+ * El spec no publica una escala de marca completa, solo el color ratificado. */
+:root {
+  --shell-primary-50: #e6f2eb;
+  --shell-primary-600: #006d2e;
+}
+
+/* Tipografía de Figma que el shell ya usaba y el spec no cubre.
+ * El spec publica `xs…3xl` (12→30px), pero no el h1 de 45px del dashboard. */
+:root {
+  --shell-font-size-h1: 2.8125rem;
+  --shell-font-size-h2: 1.4375rem;
+  --shell-font-size-h3: 1.4375rem;
+  --shell-font-size-h4: 1.25rem;
+  --shell-font-size-body: 1rem;
+  --shell-font-size-caption: 0.75rem;
+  --shell-font-weight-extra-bold: 800;
+}
+
+/* Peldaños que el spec no declara. */
+:root {
+  --shell-radius-full: 9999px;
+  --shell-z-base: 0;
+  --shell-target-touch-min: 44px;
+  --shell-color-warning-border: #fedf89;
+  --shell-focus-ring: 0 0 0 3px rgb(0 120 50 / 0.28);
+}
