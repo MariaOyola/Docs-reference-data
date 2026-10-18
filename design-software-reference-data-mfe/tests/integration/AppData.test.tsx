@@ -10,6 +10,25 @@ afterEach(() => {
 });
 
 describe('App con respuestas HTTP simuladas (no es integración contra backend)', () => {
+  it('consulta los niveles hijos sin selección tras entrar y muestra sus registros guardados', async () => {
+    vi.stubEnv('VITE_REFERENCE_DATA_API_BASE_URL', '/reference-data-api');
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(async (input) => {
+      const path = new URL(String(input)).pathname;
+      const name = path.endsWith('/microregions') ? 'Micro persistida' : path.endsWith('/departments') ? 'Departamento persistido' : 'Municipio persistido';
+      return new Response(JSON.stringify({ data: [{ id: path, name, code: 'TEST', dane_code: '05', macroregion_id: 'm', microregion_id: 'mi', department_id: 'd', is_active: true }], pagination: { page: 1, page_size: 10, total_items: 1, total_pages: 1 } }));
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    render(<App permissions={['REF_HIERARCHY_VIEW']} />);
+    for (const [tab, name] of [['Microrregiones', 'Micro persistida'], ['Departamentos', 'Departamento persistido'], ['Municipios', 'Municipio persistido']]) {
+      fireEvent.click(screen.getByRole('tab', { name: tab }));
+      expect(await screen.findByRole('button', { name })).toBeTruthy();
+    }
+    for (const [input] of fetchMock.mock.calls) {
+      expect(new URL(String(input)).searchParams.has('macroregion_id')).toBe(false);
+      expect(new URL(String(input)).searchParams.has('microregion_id')).toBe(false);
+      expect(new URL(String(input)).searchParams.has('department_id')).toBe(false);
+    }
+  });
   it.each([false, true])('respeta REF_HIERARCHY_MANAGE en los cuatro niveles (permiso: %s)', async (granted) => {
     vi.stubEnv('VITE_REFERENCE_DATA_API_BASE_URL', '/reference-data-api');
     vi.stubGlobal('fetch', vi.fn<typeof fetch>().mockImplementation(async () => new Response(JSON.stringify({

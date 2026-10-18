@@ -12,7 +12,7 @@ interface State {
   error?: Error;
 }
 
-export function useMicroregions(baseUrl?: string, macroregionId?: string) {
+export function useMicroregions(baseUrl?: string, macroregionId?: string, includeAll = false) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [revision, setRevision] = useState(0);
@@ -26,13 +26,13 @@ export function useMicroregions(baseUrl?: string, macroregionId?: string) {
       previousMacroregionId.current = macroregionId;
       if (page !== 1) setPage(1);
     }
-    if (!baseUrl || !macroregionId) {
+    if (!baseUrl || (!macroregionId && !includeAll)) {
       setState({ key, data: [], loading: false });
       return;
     }
     const controller = new AbortController();
     setState({ key, data: [], loading: true });
-    void microregionsService.list(baseUrl, { macroregionId, page: pageForParent, pageSize }, controller.signal)
+    void microregionsService.list(baseUrl, { ...(macroregionId ? { macroregionId } : {}), page: pageForParent, pageSize }, controller.signal)
       .then((result) => {
         if (!controller.signal.aborted) setState({ key, data: result.data, pagination: result.pagination, loading: false });
       })
@@ -42,7 +42,7 @@ export function useMicroregions(baseUrl?: string, macroregionId?: string) {
         }
       });
     return () => controller.abort();
-  }, [baseUrl, key, macroregionId, page, pageForParent, pageSize, revision]);
+  }, [baseUrl, key, macroregionId, includeAll, page, pageForParent, pageSize, revision]);
 
   const refresh = useCallback(() => setRevision((value) => value + 1), []);
   const create = useCallback(async (payload: MicroregionCreateDto) => {

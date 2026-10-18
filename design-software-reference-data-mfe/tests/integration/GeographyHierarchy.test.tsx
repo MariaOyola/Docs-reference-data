@@ -50,6 +50,16 @@ const pagination = {
 };
 
 describe('GeographyHierarchy', () => {
+  it('permite quitar el filtro padre con Ver todos', () => {
+    const onSelectionChange = vi.fn();
+    render(<GeographyHierarchy options={options} allowUnfiltered onSelectionChange={onSelectionChange} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Macrorregión Norte' }));
+    expect(screen.getByText(/Filtrado por macrorregión/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Ver todos' }));
+    expect(onSelectionChange).toHaveBeenLastCalledWith('macroregion', null);
+    expect(screen.queryByText(/Filtrado por macrorregión/)).toBeNull();
+    expect(screen.getByRole('button', { name: 'Microrregión A' })).toBeTruthy();
+  });
   afterEach(cleanup);
 
   it('recorre niveles, conserva el padre elegido y limpia descendientes al cambiarlo', () => {
@@ -571,6 +581,7 @@ describe('GeographyHierarchy', () => {
   });
 
   it('presenta la demostración local sin filas ficticias en App', () => {
+    vi.stubEnv('VITE_REFERENCE_DATA_API_BASE_URL', '');
     render(<App />);
     expect(screen.getByRole('heading', { name: 'Parametrización — Geografía institucional' })).toBeTruthy();
     expect(screen.getByRole('status').textContent).toContain('Modo de demostracion local');
@@ -578,5 +589,6 @@ describe('GeographyHierarchy', () => {
     expect(screen.queryByRole('row', { name: /Norte|Sur/ })).toBeNull();
     expect(screen.getByText('No hay registros locales de demostracion para mostrar.')).toBeTruthy();
     expect((screen.getByRole('button', { name: 'Nueva macrorregión' }) as HTMLButtonElement).disabled).toBe(false);
+    vi.unstubAllEnvs();
   });
 });

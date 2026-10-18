@@ -104,13 +104,14 @@ const App: FC<ReferenceDataMfeProps> = ({ permissions = [] }) => {
   const canViewParameters = hasReferenceDataPermission(permissions, REF_PARAMETER_VIEW);
   const canManageParameters = hasReferenceDataPermission(permissions, REF_PARAMETER_MANAGE);
   const [selection, setSelection] = useState<SelectionIds>({});
+  const [loadedGeographyDepth, setLoadedGeographyDepth] = useState(0);
   const [demoRecords, setDemoRecords] = useState<DemoCollections>(emptyDemoCollections);
   const demoId = useRef(0);
   const [demoMessage, setDemoMessage] = useState('');
   const macroregions = useMacroregions(apiBaseUrl);
-  const microregions = useMicroregions(apiBaseUrl, selection.macroregion);
-  const departments = useDepartments(apiBaseUrl, selection.microregion);
-  const municipalities = useMunicipalities(apiBaseUrl, selection.department);
+  const microregions = useMicroregions(apiBaseUrl, selection.macroregion, loadedGeographyDepth >= 1);
+  const departments = useDepartments(apiBaseUrl, selection.microregion, loadedGeographyDepth >= 2);
+  const municipalities = useMunicipalities(apiBaseUrl, selection.department, loadedGeographyDepth >= 3);
 
   const demoMacro = demoRecords.macroregion;
   const demoMicro = demoRecords.microregion.filter((item) => item.macroregion_id === selection.macroregion);
@@ -351,6 +352,8 @@ const App: FC<ReferenceDataMfeProps> = ({ permissions = [] }) => {
           <InstitutionalStructure baseUrl={apiBaseUrl} />
         ) : (
           <GeographyHierarchy
+            allowUnfiltered={!demoMode}
+            onActiveLevelChange={(level) => setLoadedGeographyDepth((depth) => Math.max(depth, ['macroregion', 'microregion', 'department', 'municipality'].indexOf(level)))}
             options={options}
             parentOptions={parentOptions}
             pagination={pagination}

@@ -64,6 +64,8 @@ const emptyForm = (level: GeographyLevel, parentId?: string): GeographyFormValue
 });
 
 interface GeographyHierarchyProps {
+  allowUnfiltered?: boolean;
+  onActiveLevelChange?: (level: GeographyLevel) => void;
   options: GeographyOptions;
   parentOptions?: Partial<GeographyOptions>;
   pagination?: Partial<Record<GeographyLevel, GeographyPaginationView>>;
@@ -99,6 +101,8 @@ const visiblePageNumbers = (page: number, totalPages: number): number[] => {
 };
 
 export function GeographyHierarchy({
+  allowUnfiltered = false,
+  onActiveLevelChange,
   options,
   parentOptions = options,
   pagination = {},
@@ -145,6 +149,7 @@ export function GeographyHierarchy({
     setFormValues(undefined);
     setFormError(undefined);
     setActiveLevel(level);
+    onActiveLevelChange?.(level);
   };
 
   useEffect(() => {
@@ -180,10 +185,10 @@ export function GeographyHierarchy({
   const formParentLoading = formParent ? Boolean(parentLoading[formParent.key]) : false;
   const formParentError = formParent ? parentErrors[formParent.key] : undefined;
   const formParentUnavailable = Boolean(formParent && (formParentLoading || formParentError || formParentChoices.length === 0));
-  const parentNotSelected = Boolean(parent && !selection[parent.key]);
+  const parentNotSelected = Boolean(parent && !selection[parent.key] && !allowUnfiltered);
   const visibleRecords = parent && selection[parent.key]
     ? options[current.key].filter((item) => item.parentId === selection[parent.key]?.id)
-    : parent
+    : parent && !allowUnfiltered
       ? []
       : options[current.key];
   // Let users open child forms before selecting a table row; the form's parent
@@ -393,6 +398,14 @@ export function GeographyHierarchy({
           </p>
         )}
 
+        {allowUnfiltered && parent && selection[parent.key] && (
+          <p>
+            Filtrado por {parent.singular.toLocaleLowerCase('es')}: {selection[parent.key]?.name}.{' '}
+            <button type="button" className={styles.pageButton} onClick={() => selectItem(currentIndex - 1, null)}>
+              Ver todos
+            </button>
+          </p>
+        )}
         {unavailable ? (
           <p className={styles.stateMessage} role="status">
             {unavailableMessage ?? 'La gestión geográfica no está disponible temporalmente.'}

@@ -4,6 +4,25 @@ import { hasReferenceDataPermission } from '../../src/contracts/remote-props.js'
 
 afterEach(() => { sessionStorage.clear(); vi.unstubAllGlobals(); });
 
+it('retries with the rotated host token after a 401, only once', async () => {
+  sessionStorage.setItem('sena.access_token', 'expired-test-token');
+  const fetchMock = vi.fn<typeof fetch>()
+    .mockResolvedValueOnce(new Response('{}', { status: 401 }))
+    .mockResolvedValueOnce(new Response('{"ok":true}'));
+  vi.stubGlobal('fetch', fetchMock);
+  const listener = (event: Event) => {
+    (event as CustomEvent<{ promise?: Promise<void> }>).detail.promise = Promise.resolve().then(() => {
+      sessionStorage.setItem('sena.access_token', 'rotated-test-token');
+    });
+  };
+  window.addEventListener('sena:refresh-session', listener);
+  try {
+    expect(await requestReferenceData('/reference-data-api', '/macroregions')).toEqual({ ok: true });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(new Headers(fetchMock.mock.calls[1]?.[1]?.headers).get('Authorization')).toBe('Bearer rotated-test-token');
+  } finally { window.removeEventListener('sena:refresh-session', listener); }
+});
+
 it('uses the current shell token, preserves Headers and rewrites only through the proxy prefix', async () => {
   const fetchMock = vi.fn<typeof fetch>().mockImplementation(async () => new Response('{}'));
   vi.stubGlobal('fetch', fetchMock);

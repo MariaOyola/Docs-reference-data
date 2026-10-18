@@ -10,7 +10,7 @@ import { jsonBody, requestReferenceData } from './referenceDataHttp.js';
 export const microregionsService = {
   list(baseUrl: string, query: MicroregionListQuery, signal?: AbortSignal) {
     const params = new URLSearchParams({
-      macroregion_id: query.macroregionId,
+      ...(query.macroregionId ? { macroregion_id: query.macroregionId } : {}),
       page: String(query.page),
       page_size: String(query.pageSize),
     });

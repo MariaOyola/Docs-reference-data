@@ -79,10 +79,10 @@ export interface GeographyListQuery {
 
 export type MacroregionListQuery = GeographyListQuery;
 export interface MicroregionListQuery extends GeographyListQuery {
-  macroregionId: string;
+  macroregionId?: string;
 }
 export interface DepartmentListQuery extends GeographyListQuery {
-  microregionId: string;
+  microregionId?: string;
 }
 export interface MunicipalityListQuery extends GeographyListQuery {
   departmentId?: string;

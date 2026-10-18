@@ -32,6 +32,8 @@ export interface SessionListener {
 export interface TokenProvider {
   getAccessToken(): string | null;
   setAccessToken?(token: string): void;
+  getRefreshToken?(): string | null;
+  setRefreshToken?(token: string): void;
   clear(): void;
 }
 

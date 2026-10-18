@@ -17,6 +17,39 @@ const jsonResponse = (status: number, body: unknown): Response =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
 describe('AuthClient', () => {
+  it('renueva una sola vez ante consultas simultáneas y guarda la rotación', async () => {
+    let access = 'expired';
+    let refresh = 'refresh-one';
+    let refreshCalls = 0;
+    const client = new AuthClient({ baseUrl: '/api/v1', tokenProvider: {
+      getAccessToken: () => access, setAccessToken: (value) => { access = value; },
+      getRefreshToken: () => refresh, setRefreshToken: (value) => { refresh = value; },
+      clear: () => { access = ''; refresh = ''; },
+    }, fetchImpl: async (url, init) => {
+      if (url.endsWith('/auth/refresh')) {
+        refreshCalls++;
+        expect(JSON.parse(String(init?.body))).toEqual({ refresh_token: 'refresh-one' });
+        return jsonResponse(200, { access_token: 'renewed', refresh_token: 'refresh-two', token_type: 'Bearer' });
+      }
+      return new Headers(init?.headers).get('Authorization') === 'Bearer renewed'
+        ? jsonResponse(200, mePayload) : jsonResponse(401, {});
+    } });
+    await Promise.all([client.getMe(), client.getMe()]);
+    expect(refreshCalls).toBe(1);
+    expect(access).toBe('renewed');
+    expect(refresh).toBe('refresh-two');
+  });
+
+  it('limpia ambos tokens cuando IAM rechaza renovar', async () => {
+    let cleared = false;
+    const client = new AuthClient({ baseUrl: '/api/v1', tokenProvider: {
+      getAccessToken: () => 'expired', setAccessToken: () => undefined,
+      getRefreshToken: () => 'revoked', setRefreshToken: () => undefined,
+      clear: () => { cleared = true; },
+    }, fetchImpl: async () => jsonResponse(401, {}) });
+    await expect(client.refresh()).rejects.toBeInstanceOf(HttpError);
+    expect(cleared).toBe(true);
+  });
   it('expone el usuario autenticado y sus módulos', async () => {
     const calls: string[] = [];
     const client = new AuthClient({

@@ -21,8 +21,26 @@ const authClient = new AuthClient({
   tokenProvider: {
     getAccessToken: () => sessionStorage.getItem('sena.access_token'),
     setAccessToken: (token) => sessionStorage.setItem('sena.access_token', token),
-    clear: () => sessionStorage.removeItem('sena.access_token'),
+    getRefreshToken: () => sessionStorage.getItem('sena.refresh_token'),
+    setRefreshToken: (token) => sessionStorage.setItem('sena.refresh_token', token),
+    clear: () => {
+      sessionStorage.removeItem('sena.access_token');
+      sessionStorage.removeItem('sena.refresh_token');
+    },
   },
+});
+
+// The host owns refresh rotation; concurrent remote requests share AuthClient's promise.
+window.addEventListener('sena:refresh-session', (event) => {
+  const request = event as CustomEvent<{ promise?: Promise<void> }>;
+  request.detail.promise = authClient.refresh().catch((error: unknown) => {
+    window.location.assign('/login');
+    throw error;
+  });
+});
+window.addEventListener('sena:session-expired', () => {
+  authClient.clearSession();
+  window.location.assign('/login');
 });
 
 const dataSource = resolveSessionDataSource({

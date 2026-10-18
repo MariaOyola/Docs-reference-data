@@ -37,6 +37,7 @@ export async function requestReferenceData<T>(
   baseUrl: string,
   path: string,
   init: RequestInit = {},
+  retried = false,
 ): Promise<T> {
   const url = buildReferenceDataUrl(baseUrl, path);
   const headers = new Headers(init.headers);
@@ -60,6 +61,17 @@ export async function requestReferenceData<T>(
   }
 
   if (!response.ok) {
+    if (response.status === 401 && !retried) {
+      const currentToken = sessionStorage.getItem('sena.access_token');
+      if (currentToken && currentToken !== token) return requestReferenceData<T>(baseUrl, path, init, true);
+      const detail: { promise?: Promise<void> } = {};
+      window.dispatchEvent(new CustomEvent('sena:refresh-session', { detail }));
+      if (detail.promise) {
+        await detail.promise;
+        return requestReferenceData<T>(baseUrl, path, init, true);
+      }
+    }
+    if (response.status === 401 && retried) window.dispatchEvent(new Event('sena:session-expired'));
     let body: ApiErrorBody | undefined;
     try {
       body = (await response.json()) as ApiErrorBody;

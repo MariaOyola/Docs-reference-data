@@ -1,5 +1,19 @@
 # Seguimiento E2E reference-data — 2026-10-18
 
+## Actualización: consulta de niveles hijos y renovación de sesión
+
+Se comprobó en código que antes microrregiones y departamentos no consultaban sin seleccionar su padre, y municipios tenía el mismo comportamiento en la pantalla geográfica. La selección se reiniciaba al volver a entrar. Ahora cada pestaña consulta todos los registros accesibles cuando no hay padre seleccionado; si se selecciona un padre, conserva el filtro. No se eliminan las relaciones obligatorias para crear registros ni la autorización del backend.
+
+Cambios: App.tsx coordina la pestaña activa; useMicroregions.ts y useDepartments.ts admiten consulta sin filtro; se utiliza el modo includeAll existente de useMunicipalities.ts. GeographyHierarchy.tsx permite mostrar resultados sin selección en la pantalla real, conservando el modo anterior como valor predeterminado para otros usos. Los tipos de consultas y microregionsService.ts/departmentsService.ts omiten el filtro cuando no hay padre. Las consultas mantienen paginación.
+
+AuthClient.ts ahora guarda el refresh token entregado en login, renueva mediante POST /api/v1/auth/refresh y guarda ambos tokens rotados. Coordina una sola renovación para solicitudes simultáneas y limpia la sesión ante fallo. HttpClient.ts amplía el contrato del proveedor para refresh. main.tsx conserva ambos tokens en sessionStorage, limpia ambos al salir y atiende el evento interno sena:refresh-session desde los remotes. referenceDataHttp.ts solicita esa renovación al recibir 401 y reintenta una sola vez con el token actual; si vuelve a recibir 401, invalida la sesión mediante sena:session-expired. Si no se puede renovar, el shell lleva al login. No se modificó IAM, Go, bases de datos ni duración de tokens.
+
+IMPORTANTE: cerrar sesión e iniciar sesión una vez después de actualizar, porque las sesiones anteriores no guardaron refresh_token. Luego visitar las tres pestañas hijas sin seleccionar padre: deben consultar su listado paginado. Al seleccionar una fila padre, deben mostrar únicamente sus hijos. Los formularios siguen necesitando padre válido para guardar.
+
+Validación: pruebas de AuthClient para rotación concurrente y renovación rechazada; pruebas del transporte MFE para 401/reintento con nuevo token; prueba AppData para las tres listas sin selección; suites existentes de hooks y servicios. El test de demostración se aisló explícitamente del .env.local real. Estas pruebas utilizan HTTP simulado. Pendiente comprobar con la sesión real que IAM renueve al expirar a los 15 minutos, rote el refresh token y que los registros del usuario aparezcan en las listas. No registrar ni compartir tokens en las evidencias.
+
+Resultados: compilación MFE y compilación federada del shell aprobadas; 6 pruebas AuthClient y 9 del shell aprobadas. En MFE pasaron las 37 pruebas de AppData, GeographyHierarchy y sesión, además de las 8 de hooks y servicios. Se muestra el padre usado como filtro y se añadió Ver todos para quitarlo sin volver a iniciar sesión.
+
 ## Corrección de botones de geografía
 
 El usuario comprobó /auth/me desde su navegador: HTTP 200 y REF_HIERARCHY_MANAGE presente. Después informó que no podía crear en ninguno de los cuatro niveles. Se encontró en design-software-reference-data-mfe/src/App.tsx que GeographyHierarchy recibía canManage={false} fijo. Se sustituyó por canManage={canManageHierarchy}, calculado a partir de los permisos reales entregados por el shell. No se agregaron grants ni se modificó autorización backend.
@@ -24,7 +38,7 @@ Se trabajó sobre las carpetas principales disponibles, sin modificar las copias
 | design-software-reference-data-mfe/tests/unit/sessionIntegration.test.ts | Prueba token presente/ausente, Headers, URL relativa y permisos con alcance. Usa fetch simulado; no es evidencia E2E. |
 | Seguimiento_E2E_reference-data.md | Este documento. |
 
-El remote federado ejecuta su código bajo el origen del shell y lee allí sessionStorage, aunque descargue JavaScript de 5105. Una pestaña independiente en 5105 no comparte ese almacenamiento. No se implementó refresh automático: un token expirado produce 401.
+El remote federado ejecuta su código bajo el origen del shell y lee allí sessionStorage, aunque descargue JavaScript de 5105. Una pestaña independiente en 5105 no comparte ese almacenamiento. La renovación ahora la coordina el shell como se describe en la actualización inicial.
 
 ## Comprobado
 
@@ -42,7 +56,7 @@ El remote federado ejecuta su código bajo el origen del shell y lee allí sessi
 
 El usuario autorizó un login real mínimo en el shell. /login ahora monta un formulario público fuera de RequireSession; no requiere iam-mfe para autenticarse. Otras pantallas de IAM siguen dependiendo de ese remote.
 
-AuthClient envía email/password a POST /api/v1/auth/login mediante el proxy, valida el Bearer recibido, guarda access_token mediante el TokenProvider del shell y consulta /auth/me antes de confirmar el login. No reintenta automáticamente una contraseña rechazada. Limpia el token si /auth/me falla. No persiste contraseña ni refresh_token; no incorpora renovación automática. El token se mantiene en sessionStorage hasta logout/cierre de pestaña y tiene la expiración que determina IAM. Al recargar con un token rechazado por IAM se limpia y vuelve al login.
+AuthClient envía email/password a POST /api/v1/auth/login mediante el proxy, valida el Bearer recibido y consulta /auth/me antes de confirmar el login. No reintenta automáticamente una contraseña rechazada. No persiste la contraseña. Conserva access_token y refresh_token en sessionStorage y renueva conforme a la actualización inicial. El acceso conserva la expiración que determina IAM.
 
 Archivos de esta actualización:
 
