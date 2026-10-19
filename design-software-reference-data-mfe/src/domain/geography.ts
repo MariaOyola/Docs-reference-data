@@ -3,6 +3,10 @@
  * copy. That copy is still under contract review; replace these declarations with
  * generated types after the canonical shared-contracts source is approved.
  */
+
+// Define las estructuras de datos que utiliza el frontend:
+// macrorregión, datos de creación y resultados paginados. No guarda datos.
+
 export interface GeographyPaginationDto {
   page: number;
   page_size: number;

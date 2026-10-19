@@ -1,5 +1,8 @@
 import { Route, Routes, useLocation } from 'react-router-dom';
 
+
+// Monta el MFE correspondiente a la ruta y le entrega los permisos del usuario.
+
 import { REMOTE_DEFINITIONS, type RemoteRegistry } from './remote-registry';
 import { RemoteBoundary } from './RemoteBoundary';
 import { RemoteUnavailable } from '../components/RemoteUnavailable/RemoteUnavailable';

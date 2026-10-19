@@ -1,6 +1,9 @@
 import './styles/tokens.css';
 import './styles/global.css';
 
+
+//  Arranca React, prepara AuthClient y su almacenamiento de tokens, e inicia el shell.
+
 import { StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';

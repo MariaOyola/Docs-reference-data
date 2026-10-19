@@ -7,6 +7,8 @@ import type {
 } from '../../../domain/geography.js';
 import { jsonBody, requestReferenceData } from './referenceDataHttp.js';
 
+// Define la petición concreta: POST a macroregions, con los datos convertidos a JSON.
+
 export const macroregionsService = {
   list(baseUrl: string, query: MacroregionListQuery, signal?: AbortSignal) {
     const params = new URLSearchParams({ page: String(query.page), page_size: String(query.pageSize) });

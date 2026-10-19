@@ -1,6 +1,9 @@
 import { useRef, useState, type FC } from 'react';
 import { Link, useInRouterContext } from 'react-router-dom';
 
+// Recibe permisos del shell, conecta las pantallas con sus operaciones y dirige el guardado al nivel correspondiente.
+
+
 import { useDepartments } from './application/useDepartments.js';
 import { useMacroregions } from './application/useMacroregions.js';
 import { useMicroregions } from './application/useMicroregions.js';

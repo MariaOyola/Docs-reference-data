@@ -5,6 +5,9 @@ export interface ApiErrorBody {
   };
 }
 
+// Ejecuta fetch, adjunta el token y procesa la respuesta o el error.
+// También solicita renovar la sesión cuando corresponde.
+
 export class ReferenceDataHttpError extends Error {
   constructor(
     message: string,

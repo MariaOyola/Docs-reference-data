@@ -3,6 +3,9 @@ import { HttpError } from '@sena/frontend-platform';
 import type { SessionDataSource } from './data-source/session-data-source';
 import './login.css';
 
+
+// Recibe correo y contraseña del formulario y solicita iniciar sesión.
+
 export const loginReturnPath = (state: unknown): string => {
   const from = typeof state === 'object' && state !== null && 'from' in state ? state.from : null;
   if (typeof from !== 'string' || !from.startsWith('/') || /^\/[\/\\]/.test(from) || /[\\\r\n]/.test(from)) return '/reference-data';

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+// Recibe los datos preparados, llama al servicio HTTP y, tras guardar, solicita actualizar la lista. También controla carga, errores y paginación.
+
 import { macroregionsService } from '../adapter/out/http/macroregionsService.js';
 import type { GeographyPaginationDto, MacroregionCreateDto, MacroregionDto, MacroregionUpdateDto } from '../domain/geography.js';
 import { MissingReferenceDataConfigurationError } from '../adapter/out/http/referenceDataHttp.js';

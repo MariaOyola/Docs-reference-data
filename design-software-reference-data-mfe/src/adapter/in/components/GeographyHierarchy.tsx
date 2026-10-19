@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 
 
 import styles from './GeographyHierarchy.module.css';
 
+// Muestra tabla y formulario. Recoge nombre, código y estado; valida los campos y llama a onSave.
+
 export const geographyLevels = [
   { key: 'macroregion', label: 'Macrorregiones', singular: 'Macrorregión' },
   { key: 'microregion', label: 'Microrregiones', singular: 'Microrregión' },
