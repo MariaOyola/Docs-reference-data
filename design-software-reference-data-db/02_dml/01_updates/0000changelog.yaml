@@ -1,1 +1,18 @@
-databaseChangeLog: []
+databaseChangeLog:
+  - changeSet:
+      id: 990_r6_backfill_macroregion_name
+      author: MariaOyola
+      labels: "R6,backfill,macroregion"
+      comment: "Populate name_v2 with existing names"
+      changes:
+        - sqlFile:
+            path: 990_r6_backfill_macroregion_name.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/02_dml/01_updates/990_r6_backfill_macroregion_name.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false

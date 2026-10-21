@@ -30,3 +30,19 @@ databaseChangeLog:
             path: ../../05_rollbacks/01_ddl/03_tables/002_create_tables_parameterization.rollback.sql
             relativeToChangelogFile: true
             stripComments: false
+
+  - changeSet:
+      id: 019-outbox-event-001
+      author: codex
+      labels: "HU-REF-019,ddl,tables,outbox"
+      comment: Creates the Reference Data transactional outbox.
+      changes:
+        - sqlFile:
+            path: 003_create_table_outbox_event.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/003_create_table_outbox_event.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false

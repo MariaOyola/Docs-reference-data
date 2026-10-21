@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed-demo-reference-001
+      author: jesus-gonzalez
+      labels: "seed,demo"
+      comment: Demo - jerarquia institucional (1 centro)
+      changes:
+        - sqlFile: {path: 002_seed_demo.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sql: {sql: "DELETE FROM institutional_structure.training_center WHERE id='a0000000-0000-0000-0000-000000000005'; DELETE FROM institutional_structure.municipality WHERE id='a0000000-0000-0000-0000-000000000004'; DELETE FROM institutional_structure.department WHERE id='a0000000-0000-0000-0000-000000000003'; DELETE FROM institutional_structure.microregion WHERE id='a0000000-0000-0000-0000-000000000002'; DELETE FROM institutional_structure.macroregion WHERE id='a0000000-0000-0000-0000-000000000001';"}

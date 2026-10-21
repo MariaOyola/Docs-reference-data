@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4d2b8f91-3d45-4f37-ae82-1c8d7b6e4a11
+      author: valerysinai
+      labels: "HU-08-dev,ddl,base,indexes,rollbacks"
+      comment: Creates the institutional_structure indexes for the institutional structure module.
+      changes:
+        - sqlFile:
+            path: 001_create_indexes_institutional_structure.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/10_indexes/001_create_indexes_institutional_structure.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+
+  - changeSet:
+      id: a8f17d32-6c51-4f9b-9b26-5d9e2f4c7b83
+      author: valerysinai
+      labels: "HU-08-dev,ddl,base,indexes,rollbacks"
+      comment: Creates the parameterization indexes for the parameterization module.
+      changes:
+        - sqlFile:
+            path: 002_create_indexes_parameterization.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/10_indexes/002_create_indexes_parameterization.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
