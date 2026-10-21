@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: dcl-roles-reference-001
+      author: jesus-gonzalez
+      labels: "dcl,roles"
+      comment: Roles reader/writer/admin del dominio reference
+      changes:
+        - sqlFile: {path: 001_create_roles.sql, relativeToChangelogFile: true, splitStatements: false, stripComments: false}
+      rollback:
+        - sql: {sql: "DROP ROLE IF EXISTS reference_reader; DROP ROLE IF EXISTS reference_writer; DROP ROLE IF EXISTS reference_admin;"}

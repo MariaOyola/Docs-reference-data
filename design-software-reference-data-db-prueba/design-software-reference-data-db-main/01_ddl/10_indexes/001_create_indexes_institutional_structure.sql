@@ -1,0 +1,14 @@
+CREATE INDEX ix_microregion_macroregion_id
+ON institutional_structure.microregion (macroregion_id);
+
+CREATE INDEX ix_department_microregion_id
+ON institutional_structure.department (microregion_id);
+
+CREATE INDEX ix_municipality_department_id
+ON institutional_structure.municipality (department_id);
+
+CREATE INDEX ix_training_center_municipality_id
+ON institutional_structure.training_center (municipality_id);
+
+CREATE INDEX ix_institutional_unit_training_center_id
+ON institutional_structure.institutional_unit (training_center_id);

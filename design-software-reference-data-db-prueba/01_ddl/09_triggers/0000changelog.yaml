@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 980_r6_sync_macroregion_name.sql
+      author: Majo
+      labels: "R6,expand,trigger"
+      comment: "Sincronizar name hacia name_v2"
+      changes:
+        - sqlFile:
+            path: 980_r6_sync_macroregion_name.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/04_alter/980_r6_sync_macroregion_name.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
