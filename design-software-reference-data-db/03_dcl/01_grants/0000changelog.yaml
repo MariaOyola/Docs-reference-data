@@ -3,8 +3,26 @@ databaseChangeLog:
       id: dcl-grants-reference-001
       author: jesus-gonzalez
       labels: "dcl,grants"
-      comment: Grants least-privilege del dominio reference
+      comment: Least-privilege grants for the reference domain
       changes:
         - sqlFile: {path: 001_grants.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
       rollback:
         - sql: {sql: "SELECT 1;"}
+  - changeSet:
+      id: dcl-role-hierarchy-reference-002
+      author: FreinierCardona
+      labels: "dcl,grants,hu-ref-017"
+      comment: HU-REF-017 - allow writer to assume reader for fixture validation against real PostgreSQL
+      changes:
+        - sqlFile: {path: 002_grant_reference_reader_to_writer.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sql: {sql: "REVOKE reference_reader FROM reference_writer;"}
+  - changeSet:
+      id: dcl-outbox-reference-019-003
+      author: codex
+      labels: "dcl,grants,HU-REF-019,outbox"
+      comment: Grants the relay and transactional writer access to the Reference Data outbox.
+      changes:
+        - sqlFile: {path: 003_grant_outbox_event.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
+      rollback:
+        - sqlFile: {path: 003_grant_outbox_event.rollback.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}

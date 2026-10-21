@@ -3,7 +3,7 @@ databaseChangeLog:
       id: dcl-roles-reference-001
       author: jesus-gonzalez
       labels: "dcl,roles"
-      comment: Roles reader/writer/admin del dominio reference
+      comment: Reader/writer/admin roles for the reference domain
       changes:
         - sqlFile: {path: 001_create_roles.sql, relativeToChangelogFile: true, splitStatements: false, stripComments: false}
       rollback:

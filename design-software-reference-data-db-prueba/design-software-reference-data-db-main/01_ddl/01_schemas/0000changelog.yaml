@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: f4b2d432-6724-4693-8625-b73b127bfd6f
+      author: valerysinai
+      labels: "HU-01-dev,ddl,base,schemas"
+      comment: Creates the institutional_structure schema for the institutional structure module.
+      changes:
+        - sqlFile:
+            path: 001_create_schema_institutional_structure.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/001_create_schema_institutional_structure.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 377af40e-00af-4c16-905c-a5673554812d
+      author: valerysinai
+      labels: "HU-01-dev,ddl,base,schemas"
+      comment: Creates the parameterization schema for the parameterization module.
+      changes:
+        - sqlFile:
+            path: 002_create_schema_parameterization.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/002_create_schema_parameterization.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
