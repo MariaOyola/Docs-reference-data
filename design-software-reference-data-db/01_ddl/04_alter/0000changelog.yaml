@@ -19,7 +19,7 @@ databaseChangeLog:
       id: remediation-reference-960
       author: jesus-gonzalez
       labels: "remediation,congruence,v2"
-      comment: "R3: ENUM nativo -> VARCHAR+CHECK en unit_type y value_type (ADR-004)"
+      comment: "R3: native ENUM -> VARCHAR+CHECK for unit_type and value_type (ADR-004)"
       changes:
         - sqlFile:
             path: 960_remediation.sql
@@ -29,5 +29,22 @@ databaseChangeLog:
       rollback:
         - sqlFile:
             path: ../../05_rollbacks/01_ddl/04_alter/960_remediation.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+
+  - changeSet:
+      id: 970_r6_expand_macroregion_name
+      author: MariaOyola
+      labels: "R6,expand,macroregion"
+      comment: "R6: add name_v2 while preserving the name column"
+      changes:
+        - sqlFile:
+            path: 970_r6_expand_macroregion_name.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/04_alter/970_r6_expand_macroregion_name.rollback.sql
             relativeToChangelogFile: true
             stripComments: false

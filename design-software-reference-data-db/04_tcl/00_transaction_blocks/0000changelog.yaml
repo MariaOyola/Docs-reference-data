@@ -1,1 +1,20 @@
-databaseChangeLog: []
+databaseChangeLog:
+  - changeSet:
+      id: 1000_r6_contract_macroregion_name
+      author: MariaOyola
+      labels: "R6,contract,macroregion"
+      contextFilter: "@r6-contract"
+      runInTransaction: true
+      comment: "Replace name with the synchronized TEXT column"
+      changes:
+        - sqlFile:
+            path: 1000_r6_contract_macroregion_name.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/04_tcl/00_transaction_blocks/1000_r6_contract_macroregion_name.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+            stripComments: false

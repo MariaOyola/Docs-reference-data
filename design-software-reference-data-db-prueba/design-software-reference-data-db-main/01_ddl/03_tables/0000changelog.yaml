@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8b4d9d88-5d6b-4b78-a07f-2a3e8d1f5c91
+      author: MariaOyola
+      labels: "HU-02-dev,ddl,base,tables"
+      comment: Creates the institutional_structure tables for the institutional structure module.
+      changes:
+        - sqlFile:
+            path: 001_create_tables_institutional_structure.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/001_create_tables_institutional_structure.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+
+  - changeSet:
+      id: f1c7a2be-9e3d-41d5-bb8d-6f94a0c37e52
+      author: MariaOyola
+      labels: "HU-02-dev,ddl,base,tables"
+      comment: Creates the parameterization tables for the parameterization module.
+      changes:
+        - sqlFile:
+            path: 002_create_tables_parameterization.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/002_create_tables_parameterization.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
