@@ -3,7 +3,7 @@ databaseChangeLog:
       id: seed-demo-reference-001
       author: jesus-gonzalez
       labels: "seed,demo"
-      comment: Demo - jerarquia institucional (1 centro)
+      comment: Demo - institutional hierarchy (1 training center)
       changes:
         - sqlFile: {path: 002_seed_demo.sql, relativeToChangelogFile: true, splitStatements: true, stripComments: false}
       rollback:

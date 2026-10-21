@@ -1,0 +1,2 @@
+CREATE INDEX ix_catalog_detail_catalog_id
+ON parameterization.catalog_detail (catalog_id);
