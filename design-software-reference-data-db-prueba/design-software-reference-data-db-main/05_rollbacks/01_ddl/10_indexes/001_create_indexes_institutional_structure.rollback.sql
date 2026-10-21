@@ -1,0 +1,9 @@
+DROP INDEX IF EXISTS institutional_structure.ix_microregion_macroregion_id;
+
+DROP INDEX IF EXISTS institutional_structure.ix_department_microregion_id;
+
+DROP INDEX IF EXISTS institutional_structure.ix_municipality_department_id;
+
+DROP INDEX IF EXISTS institutional_structure.ix_training_center_municipality_id;
+
+DROP INDEX IF EXISTS institutional_structure.ix_institutional_unit_training_center_id;

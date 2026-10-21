@@ -1,6 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+//Coordina la sesión del usuario y presenta el contenido autenticado.
+
 import type { SessionDataSource } from './data-source/session-data-source';
 import type { NotificationDataSource } from './data-source/notification-data-source';
 import { useCurrentUser } from './hooks/use-current-user';

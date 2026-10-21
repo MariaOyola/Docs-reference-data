@@ -1,0 +1,4 @@
+DROP TRIGGER trg_macroregion_sync_name_v2
+ON institutional_structure.macroregion;
+
+DROP FUNCTION institutional_structure.sync_macroregion_name_v2();

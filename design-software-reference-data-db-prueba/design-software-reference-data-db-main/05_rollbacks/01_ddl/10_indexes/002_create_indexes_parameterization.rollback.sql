@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS parameterization.ix_catalog_detail_catalog_id;

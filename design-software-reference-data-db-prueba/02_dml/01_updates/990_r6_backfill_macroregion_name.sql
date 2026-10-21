@@ -1,0 +1,1 @@
+UPDATE institutional_structure.macroregion SET name_v2 = name WHERE name_v2 IS DISTINCT FROM name;
